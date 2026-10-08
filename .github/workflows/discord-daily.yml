@@ -1,0 +1,19 @@
+name: Post daily close to Discord
+
+on:
+  push:
+    branches: [main]
+    paths: [data/snapshots.json]
+  workflow_dispatch:
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Post to #fodder-trends
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+          ONLY_NEW_CLOSE: ${{ github.event_name == 'push' && '1' || '' }}
+        run: python3 scripts/discord_post.py

@@ -58,7 +58,7 @@ Channel IDs are at the bottom of this file. Each message comes with the author's
 | #fodder-trends | Link to the fodder website and a daily price post | Usually nothing. If someone @mentions you, read the fodder data and answer. |
 | #recs | Your channel, and where commands are typed | Answer commands (section 4), post scheduled recommendations, scout reports and dip alerts. |
 | #profits / #losses | Closed trades with their result | Match the open position in `ledger/trades.csv` for that member, close it with the real result, react ✅. If it was one of your calls, update `ledger/calls.csv`. |
-| #weekly-reviews | Your channel | Every Sunday, post the weekly review (section 9). Members may ask follow-up questions here. |
+| #weekly-reviews | Your channel | Every Sunday, post the weekly review (section 13). Members may ask follow-up questions here. |
 | #portfolio (if it exists) | Your channel | Keep one pinned message per member listing open positions, cost, latest price, profit after tax and hold deadline. Edit it instead of posting new ones. |
 
 If a message isn't about trading, ignore it or react. Don't lecture.
@@ -359,6 +359,7 @@ Add new lessons to `notes/lessons.md`. If there's no data for a section, say so 
 
 - Server: FC27 trading
 - Time zone for all times: Eastern (America/New_York)
+
 If a value below is missing, fill it in yourself as soon as you learn it (for example, record the owner's user ID the next time they post) and tell the owner once.
 
 - Owner user ID: (not set)

@@ -8,6 +8,7 @@
   const RULES = {
     windowDays: 7,      // fair price = median of readings in this many previous days
     minReadings: 6,     // readings needed before fair price counts
+    minSpanDays: 2,     // and they must cover at least this many days
     buyBelow: 0.90,     // buy at or under 90% of fair
     budget: 50000,      // coins per position
     takeProfit: 0.06,   // sell once profit after tax reaches 6%
@@ -75,8 +76,10 @@
     for (let i = 0; i < pts.length; i++) {
       const from = pts[i].t - RULES.windowDays * DAY;
       const prev = [];
-      for (let j = i - 1; j >= 0 && pts[j].t >= from; j--) prev.push(pts[j].v);
-      pts[i].fair = prev.length >= RULES.minReadings ? median(prev) : null;
+      let j = i - 1;
+      for (; j >= 0 && pts[j].t >= from; j--) prev.push(pts[j].v);
+      const span = prev.length ? (pts[i].t - pts[j + 1].t) / DAY : 0;
+      pts[i].fair = prev.length >= RULES.minReadings && span >= RULES.minSpanDays ? median(prev) : null;
     }
     return pts;
   }
@@ -166,8 +169,9 @@
 
   // Fair price "now" includes the latest reading's own window (the previous 7 days up to it).
   function medianOfWindow(pts, t) {
-    const vals = pts.filter((p) => p.t > t - RULES.windowDays * DAY && p.t <= t).map((p) => p.v);
-    return vals.length >= RULES.minReadings ? median(vals) : null;
+    const win = pts.filter((p) => p.t > t - RULES.windowDays * DAY && p.t <= t);
+    const span = win.length ? (t - win[0].t) / DAY : 0;
+    return win.length >= RULES.minReadings && span >= RULES.minSpanDays ? median(win.map((p) => p.v)) : null;
   }
 
   function renderSim(all) {
@@ -191,8 +195,8 @@
     const body = document.querySelector("#trades tbody");
     const rows = trades.sort((a, b) => b.t - a.t);
     if (!rows.length) {
-      const need = days < RULES.windowDays
-        ? `The trader needs about ${RULES.windowDays} days of ${state.platform === "console" ? "console" : "PC"} history to judge a fair price, so it hasn't traded yet.`
+      const need = days < RULES.minSpanDays
+        ? `The trader needs ${RULES.minSpanDays} days of ${state.platform === "console" ? "console" : "PC"} history to judge a fair price, so it hasn't traded yet.`
         : "No rating has dipped 10% below its fair price yet, so the trader is waiting.";
       body.innerHTML = "";
       document.getElementById("trades-empty").textContent = need;
